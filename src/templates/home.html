@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
 
-
+{% block title %}
+<span>Branch Help Center</span>
+{% endblock title %}
 
 {% block content %}
 
@@ -22,7 +24,7 @@
             <p class="text-lg font-normal text-gray-500 dark:text-gray-400 mb-6">Your satisfaction is our priority! If you have any questions, concerns, or feedback, we're here to help.
 
                 Click the button below to be directed to our dedicated Complaints and Support page, where you can submit your inquiry and our team will assist you promptly..</p>
-            <a href="{{ url_for('main.client_support_page') }}"  target="_blank" class="inline-flex justify-center items-center py-2.5 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
+            <a href="{{ url_for('main.client_support_page') }}"  class="inline-flex justify-center items-center py-2.5 px-5 text-base font-medium text-center text-white rounded-lg bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-900">
                 Contact Support
             </a>
         </div>

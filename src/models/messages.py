@@ -17,7 +17,10 @@ class Message(UserMixin, TimestampMixin ,db.Model):
     priority = db.Column(db.Integer)
     status = db.Column(db.String(100), default='Pending')
     agent_code = db.Column(UUID(as_uuid=True), default=None)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    client_id = db.Column(db.Integer)
+    agent_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    agent = db.relationship('User', backref='message', lazy=True)
+    
    
     
     def __repr__(self):

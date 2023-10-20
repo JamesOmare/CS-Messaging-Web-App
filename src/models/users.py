@@ -16,7 +16,6 @@ class User(UserMixin, TimestampMixin ,db.Model):
     user_email = db.Column(db.String(120), unique=True, nullable = False)
     password = db.Column(db.Text, nullable = False)
     phone_number = db.Column(db.String(100), unique=True, nullable = False)
-    agent_code = db.Column(db.String(150), nullable = True)
     is_active = db.Column(db.Boolean, default=True)
     is_agent = db.Column(db.Boolean, default=False)
     messages_sent = db.Column(db.Integer, default=0)

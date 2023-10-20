@@ -9,6 +9,9 @@ from .. models import(
     Message, User
 )
 
+from faker import Faker
+fake = Faker()
+
 auth = Blueprint('auth', __name__)
 
 
@@ -99,3 +102,87 @@ def login():
 def logout():
     logout_user()
     return redirect(url_for('auth.login'))
+
+
+@auth.route("/generate_users_and_messages")
+def generate_users_and_messages():
+    fake_users = []
+    try:
+        for _ in range(40):
+            username = fake.user_name()
+            email = fake.email()
+            phone_number = fake.random_int(min=7000000000, max=7999999999)
+            # 'password' is the same for all users
+            password = 'password'
+            
+            new_user = User(
+                user_name=username,
+                password=generate_password_hash(password, method='scrypt'),
+                user_email=email,
+                phone_number=f'07{phone_number:08}',  # Format phone number
+            )
+            db.session.add(new_user)
+            fake_users.append(new_user)
+
+        db.session.commit()
+        
+        
+    except Exception as e:
+        return {
+            "message": "failed",
+            "data": f"Failed to generate test users: {e}"
+        }, 500
+        
+    else:
+        
+        try:
+            for user in fake_users:
+                # Generate 1 to 5 messages per user
+                for _ in range(fake.random_int(min=1, max=5)): 
+                    
+                     # Adjust max_characters as needed
+                    comment = fake.text(max_nb_chars=200) 
+                    client_id = user.id
+                    
+                    # Generates random priority (1-5)
+                    priority = fake.random_int(min=1, max=5)  
+
+                    new_message = Message(
+                        text_query=comment,
+                        client_id=client_id,
+                        priority=priority
+                    )
+                    db.session.add(new_message)
+                    
+                    # function to Assign the saved message to the agent with the fewest assigned messages
+                    def assign_message_to_agent(new_message):
+                        # Query agents sorted by the number of assigned messages in ascending order
+                        agents = User.query.filter_by(is_agent=True).order_by(User.messages_allocated).all()
+
+                            
+                        # Assign the message to the agent with the fewest assigned messages
+                        agent_to_assign = agents[0]
+                        new_message.agent_code = agent_to_assign.user_code
+                        new_message.agent_id = agent_to_assign.id
+                        
+                        # update message sent count to the user
+                        user.messages_sent += 1
+
+                        # Update the agent's assigned message count
+                        agent_to_assign.messages_allocated += 1
+
+                    # Assign the new message to an agent
+                    assign_message_to_agent(new_message)
+
+            db.session.commit()
+            
+        except Exception as e:
+            return {
+                "message": "failed",
+                "data": f"Failed to generate test messages: {e}"
+            }, 500
+            
+        else:
+            return {
+                "message": "successfully created test users and messages",
+            }, 200

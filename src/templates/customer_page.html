@@ -1,5 +1,8 @@
 {% extends 'base.html' %}
 
+{% block title %}
+<span>Branch Help Center</span>
+{% endblock title %}
 
 
 {% block content %}
@@ -133,15 +136,22 @@ font-family: 'Source Sans Pro';
                             <p class="ml-4 w-56">
                               <strong class="block font-medium text-gray-700">Query #{{ loop.index }}</strong>
                               <span class="truncate text-sm text-gray-400">Submitted <span class="ml-2 mr-3 rounded-full bg-green-100 px-2 py-0.5 text-green-900"> {{  moment(message.created_at).fromNow(refresh=True) }} </span>
-                              <span class="truncate text-sm text-gray-400">Status <span class="ml-2 mr-3 rounded-full bg-blue-100 px-2 py-0.5 text-blue-900">{{ message.status }}</span>
+                              <span class="truncate text-sm text-gray-400">Status </span>
+                                {% if message.status == "Pending" %}
+                                    <span class="ml-2 mr-3 rounded-full bg-red-100 px-2 py-0.5 text-red-900">{{ message.status }}</span>
+
+                                {% else %}
+                                    <span class="ml-2 mr-3 rounded-full bg-blue-100 px-2 py-0.5 text-blue-900">{{ message.status }}</span>
+                                {% endif %}
+                                
                             </p>
                           </div>
                         </div>
                         <div class="mb-3">{{ message.text_query }}</div>
-                        {% if message.status == "Answered" %}
+                        {% if message.status == "Resolved" %}
                           <div class="rounded-lg bg-gray-100 p-4">
-                            <p class="mb-2 text-gray-500">You commented on Sep 4</p>
-                            <p class="">{{ message.text_reply }}</p>
+                            <p class="mb-2 text-gray-500 text-sm border-b-2 border-gray-300 pb-1">Answered by Support Agent: <span class="ml-2 mr-3 rounded-full bg-teal-100 px-2 py-0.5 text-teal-900">{{ message.agent.user_name }}</span>  on: <span class="ml-2 mr-3 rounded-full bg-blue-100 px-2 py-0.5 text-blue-900">{{ moment(message.updated_at).format('LLL') }}</span></p>
+                            <p class=""><span class="text-gray-500 text-sm">Reply: </span> {{ message.text_reply }}</p>
                           </div>
                         {% endif %}
                         
