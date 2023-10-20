@@ -4,8 +4,6 @@ from .config.config import Config
 from .auth.views import auth
 from .main.views import main
 from .models import (
-    Agent,
-    Customer,
     Message,
     User
 )

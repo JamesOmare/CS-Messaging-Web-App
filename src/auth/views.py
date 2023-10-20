@@ -6,7 +6,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask import Flask, render_template, url_for, redirect, session
 from flask_login import login_user, logout_user, login_required, current_user
 from .. models import(
-    Agent, Customer, Message, User
+    Message, User
 )
 
 auth = Blueprint('auth', __name__)
@@ -77,7 +77,7 @@ def login():
 
         if user:
 
-            if user.active:
+            if user.is_active:
                 if check_password_hash(user.password, password):
                     login_user(user, remember=True)
                     flash('Logged in Successfully!', 'success')
@@ -85,7 +85,7 @@ def login():
                 else:
                     flash('Username or Password is incorrect!', 'danger')
 
-            elif not user.active:
+            elif not user.is_active:
                 flash("Your personal account has been suspended for violating our terms of service. You can check your email for further information or call our support team.", "danger")
         
         else:

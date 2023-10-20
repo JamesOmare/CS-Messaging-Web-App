@@ -1,3 +1,4 @@
+from re import U
 from ..utils.utils import db
 from flask_login import UserMixin
 from .Timestamp import TimestampMixin
@@ -11,12 +12,12 @@ class Message(UserMixin, TimestampMixin ,db.Model):
 
     __tablename__ = 'message'
     id = db.Column(db.Integer, primary_key = True)
-    message_code = db.Column(UUID(as_uuid=True), default=uuid.uuid4, unique=True)
-    text = db.Column(db.Text)
+    text_query = db.Column(db.Text)
+    text_reply = db.Column(db.Text)
+    priority = db.Column(db.Integer)
+    status = db.Column(db.String(100), default='Pending')
+    agent_code = db.Column(UUID(as_uuid=True), default=None)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    customer_id = db.Column(db.Integer, db.ForeignKey('customer.id'))
-    agent_id = db.Column(db.Integer, db.ForeignKey('agent.id'))
-
    
     
     def __repr__(self):

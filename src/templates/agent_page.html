@@ -42,7 +42,7 @@
               </svg>
               
             </span>
-            <span class="text-xl">{{ current_user.username }}</span>
+            <span class="text-xl">{{ current_user.user_name | title }}</span>
           </span>
         </div>
         <ul class="mt-8 space-y-3 md:mt-20">
@@ -100,14 +100,15 @@
     <div class="flex h-full w-full flex-col">
       <!-- Navbar -->
       <header class="relative flex flex-col items-center bg-white px-4 py-4 shadow sm:flex-row md:h-20">
-        <div class="flex w-full flex-col justify-between overflow-hidden transition-all sm:max-h-full sm:flex-row sm:items-center">
-          <div class="relative ml-10 flex items-center justify-between rounded-md sm:ml-auto">
+        <div class="mx-auto mt-2 mb-2 w-screen max-w-screen-md p-10 leading-6"> 
+          <form class="relative mx-auto flex w-full max-w-2xl items-center justify-between rounded-md border shadow-lg"> 
             <svg class="absolute left-2 block h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="11" cy="11" r="8" class=""></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65" class=""></line>
             </svg>
-            <input type="name" name="search" class="h-12 w-full rounded-md border border-gray-100 bg-gray-100 py-4 pr-4 pl-12 shadow-sm outline-none focus:border-blue-500" placeholder="Search for anything" />
-          </div>
+            <input type="name" name="search" class="h-14 w-full rounded-md py-4 pr-40 pl-12 outline-none focus:ring-2" placeholder="City, Address, Zip :" />
+            <button type="submit" class="absolute right-0 mr-1 inline-flex h-12 items-center justify-center rounded-lg bg-gray-900 px-10 font-medium text-white focus:ring-4 hover:bg-gray-700">Search</button>
+          </form>
         </div>
       </header>
       <!-- /Navbar -->
@@ -116,7 +117,7 @@
       <div class="h-full overflow-hidden pl-10">
         <main id="dashboard-main" class="h-[calc(100vh-10rem)] overflow-auto px-4 py-10">
           <!-- Put your content inside of the <main/> tag -->
-          <h1 class="text-2xl font-black text-gray-800">Good Morning!</h1>
+          <h1 class="text-2xl font-black text-gray-800">Good Day {{ current_user.user_name | title }}</h1>
           <p class="mb-6 text-gray-600">Here's an overview of your recent activities.</p>
           <div class="flex flex-wrap gap-x-4 gap-y-8">
           
@@ -136,7 +137,7 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                     </svg>
                     <p class="text-sm font-medium text-gray-500">Assigned Queries</p>
-                    <p class="text-4xl font-medium text-gray-800">{{ total_transactions }}</p>
+                    <p class="text-4xl font-medium text-gray-800">{{ current_user.messages_allocated }}</p>
                     
                   </div>
               
@@ -151,7 +152,7 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                     </svg>
                     <p class="text-sm font-medium text-gray-500">Queries Answered</p>
-                    <p class="text-4xl font-medium text-gray-800">{{ completed_transactions }}</p>
+                    <p class="text-4xl font-medium text-gray-800">{{ current_user.messages_resolved }}</p>
                     
                   </div>
               
@@ -166,7 +167,8 @@
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                     </svg>
                     <p class="text-sm font-medium text-gray-500">Queries Unanswered</p>
-                    <p class="text-4xl font-medium text-gray-800">{{ failed_transactions }}</p>
+                    {% set messages_unresolved = current_user.messages_allocated - current_user.messages_resolved %}
+                    <p class="text-4xl font-medium text-gray-800">{{ messages_unresolved }}</p>
                   </div>
 
                   <div class="max-w-md rounded-lg border px-6 pt-6 pb-10 text-lg">
@@ -180,10 +182,10 @@
                     <svg xmlns="http://www.w3.org/2000/svg" class="float-right h-6 w-6 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                       <path stroke-linecap="round" stroke-linejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
                     </svg>
-                   
-                      
+                
                     <p class="text-sm font-medium text-gray-500">Completion Percentage</p>
-                    <p class="text-4xl font-medium text-gray-800">{{ failed_transactions }}</p>
+                    {% set completion_percentage =  ((current_user.messages_resolved) /(current_user.messages_allocated) * 100)  %}
+                    <p class="text-4xl font-medium text-gray-800">{{ completion_percentage }}%</p>
                   </div>
 
 
