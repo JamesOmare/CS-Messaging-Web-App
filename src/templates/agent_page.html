@@ -402,15 +402,12 @@
                                   <label for="autoAnswers" class="block text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
                                   <select id="autoAnswers" name="selected_answer" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                                       <option selected>Choose an auto answer</option>
-                                      <option value="Payment Enquiries">For payment inquiries, you can make payments through our online portal. Here's the link: [Payment Portal Link].</option>
-                                      <option value="Interest Rate and Terms">Our current interest rate is [Rate]. Loan terms typically range from [Minimum Term] to [Maximum Term].</option>
-                                      <option value="Account and Personal Information Update">To update your account information, please log in to your online account and go to the 'Profile' section.</option>
-                                      <option value="General">We're here to assist you! How can I help you today?</option>
-                                      <option value="Payment Enquiries">For payment inquiries, you can make payments through our online portal. Here's the link: [Payment Portal Link]. If you have any issues, please contact our support team at [Support Email].</option>
-                                      <option value="Interest Rate and Terms">Our current interest rate is [Rate]. Loan terms typically range from [Minimum Term] to [Maximum Term]. If you need further information, visit our website or contact our financial advisors at [Advisor Phone].</option>
-                                      <option value="Account and Personal Information Update">To update your account information, please log in to your online account and go to the 'Profile' section. If you encounter any problems, reach out to our account support team at [Account Support Phone].</option>
-                                      <option value="General">We're here to assist you! How can I help you today? Please provide more details about your inquiry, and we'll provide the most suitable assistance.</option>
-                                      <option value="Loan Application">Our loan application process is simple and secure. You can start your application online at [Application Link]. If you have questions or need assistance, our loan experts are available at [Loan Expert Phone].</option>
+                                      <option>For payment inquiries, you can make payments through our online portal. Here's the link: https://portal_link.com.</option>
+                                      <option>Our current interest rate is [Rate]. Loan terms typically range from [Minimum Term] to [Maximum Term].</option>
+                                      <option>To update your account information, please log in to your online account and go to the 'Profile' section.</option>
+                                      <option>We're here to assist you! How can I help you today?</option>
+                                      <option>Our loan application process is simple and secure. You can start your application online at https://application_link.com. If you have questions or need assistance, our loan experts are available at [Loan Expert Phone].</option>
+                                      <option>To update your account information, please log in to your online account and go to the 'Profile' section. If you encounter any problems, reach out to our account support team at [Account Support Phone]</option>
                                   </select>
 
                                 <!-- Add a toggle button to switch between dropdown and textarea -->
@@ -439,7 +436,7 @@
                                     </div>
                                     <div class="px-4 py-2 bg-white rounded-b-lg dark:bg-gray-800">
                                         <label for="content" class="sr-only">Publish post</label>
-                                        <textarea id="autoAnswer" name="text_reply" rows="8" class="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write a Reply..." required></textarea>
+                                        <textarea id="autoAnswer" name="text_reply" rows="8" class="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400" placeholder="Write a Reply..." disabled></textarea>
                                     </div>
                                 </div>
 
@@ -570,6 +567,8 @@
                       {% endif %}
                       
                       <div class="text-sm">Label:<span class="ml-2 mr-3 text-sm rounded-full bg-teal-100 px-2 py-0.5 text-teal-900">{{ priority }}</span></div>
+                      <div class="text-sm">Resolved :<span class="ml-2 mr-3 text-sm rounded-full bg-teal-100 px-2 py-0.5 text-teal-900">{{ moment(message.updated_at).fromNow(refresh=True) }}</span></div>
+
                       
                      
                     </div>
@@ -833,38 +832,29 @@
     const toggleAutoAnswer = document.getElementById('toggleAutoAnswer');
     const autoAnswer = document.getElementById('autoAnswer');
     const autoAnswersDropdown = document.getElementById('autoAnswers');
-    const autoAnswerOptions = autoAnswersDropdown.getElementsByTagName('option');
 
-    // Store the initial value of the textarea and the disabled state of dropdown options
-    const initialTextareaValue = autoAnswer.value;
-    const initialOptionDisabled = Array.from(autoAnswerOptions).map(option => option.disabled);
+    // Initial state
+    autoAnswer.setAttribute('disabled', 'true');
+    autoAnswer.setAttribute('placeholder', 'Select an auto answer from the dropdown');
 
     toggleAutoAnswer.addEventListener('change', () => {
         if (toggleAutoAnswer.checked) {
             autoAnswer.removeAttribute('disabled');
             autoAnswer.setAttribute('placeholder', 'Type your reply');
-            
-            // Disable the dropdown and its options
             autoAnswersDropdown.setAttribute('disabled', 'true');
             autoAnswersDropdown.selectedIndex = 0;
-            for (let i = 0; i < autoAnswerOptions.length; i++) {
-                autoAnswerOptions[i].disabled = true;
-            }
         } else {
             autoAnswer.setAttribute('disabled', 'true');
             autoAnswer.setAttribute('placeholder', 'Select an auto answer from the dropdown');
-            
-            // Enable the dropdown and restore its original disabled state
             autoAnswersDropdown.removeAttribute('disabled');
-            for (let i = 0; i < autoAnswerOptions.length; i++) {
-                autoAnswerOptions[i].disabled = initialOptionDisabled[i];
-            }
-            
-            // Reset the textarea value to its initial value
-            autoAnswer.value = initialTextareaValue;
+            autoAnswersDropdown.selectedIndex = 0;
         }
     });
 </script>
+
+
+
+
 
 
 

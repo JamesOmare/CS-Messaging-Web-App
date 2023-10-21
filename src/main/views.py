@@ -97,10 +97,8 @@ def agent_support_page():
             | (User.user_email.ilike(f"%{search_query}%"))
         )
 
-    # Order by priority (1 being the most priority, 5 being the least) and then by created_at in ascending order
-    resolved_messages_query = resolved_messages_query.order_by(
-        asc(Message.priority), asc(Message.created_at)
-    )
+    # Order by updated_at in ascending order
+    resolved_messages_query = resolved_messages_query.order_by( asc(Message.updated_at))
 
     resolved_messages = resolved_messages_query.paginate(
         page=page_resolved, per_page=5, error_out=False
@@ -202,13 +200,15 @@ def reply_to_message():
     if request.method == "POST":
         agent_id = request.form['agent_id']
         message_id = request.form['message_id']  
-        text_reply = request.form['text_reply']
-        auto_reply = request.form['selected_answer']
+        
+         # Use .get() to avoid KeyError if it's not present
+        text_reply = request.form.get('text_reply') 
+        auto_reply = request.form.get('selected_answer')
 
-        if auto_reply or text_reply:
-            agent_reply = text_reply if text_reply else auto_reply         
-        
-        
+        # Use the value that is not None or empty
+        agent_reply = text_reply or auto_reply  
+               
+       
         message = Message.query.filter_by(id=message_id).first()
         agent = User.query.filter_by(id=agent_id, is_agent=True).first()
         
