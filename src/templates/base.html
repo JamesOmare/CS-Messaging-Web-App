@@ -57,6 +57,9 @@
     </header>
 
     <!-- Flash Messages -->
+    
+    {% block flash_message %}{% endblock flash_message %}
+      
     <span>
     {%  with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}

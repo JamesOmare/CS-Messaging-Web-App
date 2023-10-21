@@ -37,9 +37,11 @@ def client_support_page():
     messages = Message.query.filter_by(
                         client_id=user,
                         ).order_by(desc(Message.created_at)).all()
+    data = {
+        'messages': messages,
+    }
     
-    
-    return render_template('customer_page.html', messages = messages)
+    return render_template('customer_page.html', **data)
 
 @main.route('/agent_support_page')
 @login_required
@@ -47,29 +49,54 @@ def agent_support_page():
     if not current_user.is_agent:
         abort(403)
         
-    page = request.args.get('page', 1, type=int)
+    # Pagination for pending messages    
+    page_pending = request.args.get('page_pending', 1, type=int)
     
-    pending_messages = Message.query.filter_by(
-                        agent_code=current_user.user_code, status="Pending"
-                        ).order_by(desc(Message.created_at)
-                        ).paginate(page=page, per_page=5, error_out=False)
+    # Pagination for resolved messages
+    page_resolved = request.args.get('page_resolved', 1, type=int)
     
-    resolved_messages = Message.query.filter_by(
-                        agent_code=current_user.user_code, status="Resolved"
-                        ).order_by(desc(Message.created_at)
-                        ).paginate(page=page, per_page=5, error_out=False)
+    # Get the search query from the request's query parameters upon a GET request
+    search_query = request.args.get('search_query')
     
-    # Order by priority in ascending order(1..5)
-    # # Order by created_at in descending order (latest first)
-    # messages = Message.query.filter_by(
-    #         agent_code=current_user.user_code
-    #         ).order_by(
-    #             asc(Message.priority),  
-    #             desc(Message.created_at)
-    #             ).all()
+
+    # Query for pending messages
+    pending_messages_query = Message.query.filter(
+        Message.agent_code == current_user.user_code,
+        Message.status == "Pending"
+    )
+    
+    # Apply search filtering if a search query is provided
+    if search_query:
+        pending_messages_query = pending_messages_query.filter(
+            Message.text_query.ilike(f"%{search_query}%")
+        )
+
+    pending_messages = pending_messages_query.order_by(desc(Message.created_at)).paginate(
+        page=page_pending, per_page=5, error_out=False
+    )
+    
+    
+    # Query for resolved messages
+    resolved_messages_query = Message.query.filter(
+        Message.agent_code == current_user.user_code,
+        Message.status == "Resolved"
+    )
+
+    # Apply search filtering if a search query is provided
+    if search_query:
+        resolved_messages_query = resolved_messages_query.filter(
+            Message.text_query.ilike(f"%{search_query}%")
+        )
+
+    resolved_messages = resolved_messages_query.order_by(desc(Message.created_at)).paginate(
+        page=page_resolved, per_page=5, error_out=False
+    )
+
+
     messages = {
         'pending_messages': pending_messages,
-        'resolved_messages': resolved_messages
+        'resolved_messages': resolved_messages,
+        'search_query': search_query,
         
     }
     
@@ -84,6 +111,7 @@ def send_message():
         client_id = request.form['user_id']
         
         client = User.query.filter_by(id=client_id, is_agent = False).first()
+        
         
         if not client:
             # Handle the case when client id is invalid

@@ -150,7 +150,7 @@ font-family: 'Source Sans Pro';
                         <div class="mb-3">{{ message.text_query }}</div>
                         {% if message.status == "Resolved" %}
                           <div class="rounded-lg bg-gray-100 p-4">
-                            <p class="mb-2 text-gray-500 text-sm border-b-2 border-gray-300 pb-1">Answered by Support Agent: <span class="ml-2 mr-3 rounded-full bg-teal-100 px-2 py-0.5 text-teal-900">{{ message.agent.user_name }}</span>  on: <span class="ml-2 mr-3 rounded-full bg-blue-100 px-2 py-0.5 text-blue-900">{{ moment(message.updated_at).format('LLL') }}</span></p>
+                            <p class="mb-2 text-gray-500 text-sm border-b-2 border-gray-300 pb-1">Answered on: <span class="ml-2 mr-3 rounded-full bg-blue-100 px-2 py-0.5 text-blue-900">{{ moment(message.updated_at).format('LLL') }}</span></p>
                             <p class=""><span class="text-gray-500 text-sm">Reply: </span> {{ message.text_reply }}</p>
                           </div>
                         {% endif %}
