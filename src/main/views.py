@@ -43,64 +43,77 @@ def client_support_page():
     
     return render_template('customer_page.html', **data)
 
+
+
 @main.route('/agent_support_page')
 @login_required
 def agent_support_page():
     if not current_user.is_agent:
         abort(403)
-        
-    # Pagination for pending messages    
+
+    # Pagination for pending messages
     page_pending = request.args.get('page_pending', 1, type=int)
-    
+
     # Pagination for resolved messages
     page_resolved = request.args.get('page_resolved', 1, type=int)
-    
+
     # Get the search query from the request's query parameters upon a GET request
     search_query = request.args.get('search_query')
-    
 
     # Query for pending messages
-    pending_messages_query = Message.query.filter(
+    pending_messages_query = Message.query.join(User).filter(
         Message.agent_code == current_user.user_code,
-        Message.status == "Pending"
+        Message.status == "Pending",
     )
-    
+
     # Apply search filtering if a search query is provided
     if search_query:
         pending_messages_query = pending_messages_query.filter(
-            Message.text_query.ilike(f"%{search_query}%")
+            (Message.text_query.ilike(f"%{search_query}%"))
+            | (User.user_name.ilike(f"%{search_query}%"))
+            | (User.user_email.ilike(f"%{search_query}%"))
         )
 
-    pending_messages = pending_messages_query.order_by(desc(Message.created_at)).paginate(
+    # Order by priority (1 being the most priority, 5 being the least) and then by created_at in ascending order
+    pending_messages_query = pending_messages_query.order_by(
+        asc(Message.priority), asc(Message.created_at)
+    )
+
+    pending_messages = pending_messages_query.paginate(
         page=page_pending, per_page=5, error_out=False
     )
-    
-    
+
     # Query for resolved messages
-    resolved_messages_query = Message.query.filter(
+    resolved_messages_query = Message.query.join(User).filter(
         Message.agent_code == current_user.user_code,
-        Message.status == "Resolved"
+        Message.status == "Resolved",
     )
 
     # Apply search filtering if a search query is provided
     if search_query:
         resolved_messages_query = resolved_messages_query.filter(
-            Message.text_query.ilike(f"%{search_query}%")
+            (Message.text_query.ilike(f"%{search_query}%"))
+            | (User.user_name.ilike(f"%{search_query}%"))
+            | (User.user_email.ilike(f"%{search_query}%"))
         )
 
-    resolved_messages = resolved_messages_query.order_by(desc(Message.created_at)).paginate(
-        page=page_resolved, per_page=5, error_out=False
+    # Order by priority (1 being the most priority, 5 being the least) and then by created_at in ascending order
+    resolved_messages_query = resolved_messages_query.order_by(
+        asc(Message.priority), asc(Message.created_at)
     )
 
+    resolved_messages = resolved_messages_query.paginate(
+        page=page_resolved, per_page=5, error_out=False
+    )
 
     messages = {
         'pending_messages': pending_messages,
         'resolved_messages': resolved_messages,
         'search_query': search_query,
-        
     }
-    
+
     return render_template('agent_page.html', **messages)
+
 
 @main.route('/send_message', methods=['POST'])
 @login_required
@@ -190,6 +203,10 @@ def reply_to_message():
         agent_id = request.form['agent_id']
         message_id = request.form['message_id']  
         text_reply = request.form['text_reply']
+        auto_reply = request.form['selected_answer']
+
+        if auto_reply or text_reply:
+            agent_reply = text_reply if text_reply else auto_reply         
         
         
         message = Message.query.filter_by(id=message_id).first()
@@ -197,7 +214,7 @@ def reply_to_message():
         
         if message and agent:
             # update message with the reply and status
-            message.text_reply = text_reply
+            message.text_reply = agent_reply
             message.status = "Resolved"
             
             # update agent with the resolved message count
