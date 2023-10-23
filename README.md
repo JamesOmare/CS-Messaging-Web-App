@@ -59,7 +59,7 @@ Install the required Python packages i.e Flask using pip and install the package
 
 4. **Configure Environment Variables:**
 
-The application uses environment variables (e.g., for database connection), create a `.env` file and add the following variables:
+The application uses environment variables (e.g., for database connection), create a `.env` file in the root directory and add the following variables:
 
 - In .env file:
 
@@ -76,8 +76,12 @@ The application uses environment variables (e.g., for database connection), crea
 5. **Database Setup:**
 
 
+
 #### Alternative 1 - SQLITE
 In the application root folder, there is an instance folder which has the sqlite database. This database contains user and messaging data(the one shared in the csv file). This is the default database i've used and will not require any additional set up once the app starts.
+
+- All users have a password `password`.
+ - There are 5 agents with the credentials agent1@gmail.com ... agent5@gmail.com 
 
 
 #### Alternative 2 - POSTGRES
@@ -90,9 +94,9 @@ If your want to use postgres for any reason i.e the sqlite database did not work
 - Alternatively, if you don't want to manaully create users and messages, In the src folder(root directory), go to the auth folder and go to views.py.
  Here, there are three flask function views that are located at the bottom of the file,generate_users_and_messages, generate_users and generate_messages. 
 - To create a list of random users (all their passwords are "password"), first run the application, then go to postman or any similar software and run a GET request to the endpoint "http://127.0.0.1:5007/generate_users". This will create 50 random users with siilar passwords("password"). You can then manually add agents by changing the field "is_agent" to True.
-# Get the list of users between 10 and 56
-        users = User.query.filter(User.id >= 10, User.id <= 56, User.is_agent == False).all()
-- To generate random test messages(after already adding the users(50)), make a get request to the endpoint "" 
+- After creating users and adding agents(changing the is_agent field to True), you can then add messages by first updating the code in line 354 in the file `src/auth/views.py` to the following:
+        users = User.query.filter(User.id >= (number of agents added preferrably in their id order i.e id 1-5 are agents so your clients start from id 6, so you'll input the int 6), User.id <= 50, User.is_agent == False).all()
+- Then make a GET request to the endpoint "http://127.0.0.1:5007generate_messages". This will fill 100 messages shared from the csv file you shared to random client between the id specified to id 50. It will also assign each message to an agent systematically i.e agent 1 will have 20 messages, agent 2 will have 20 messages and so on.
 
 
 6. **Run the Application:**

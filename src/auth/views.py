@@ -192,7 +192,7 @@ def generate_users_and_messages():
 def generate_users():
     fake_users = []
     try:
-        for _ in range(55):
+        for _ in range(50):
             username = fake.user_name()
             email = f"{fake.user_name()}@gmail.com"
             # Ensure email ends with @gmail.com
