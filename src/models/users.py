@@ -11,7 +11,6 @@ class User(UserMixin, TimestampMixin ,db.Model):
 
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key = True)
-    user_code = db.Column(UUID(as_uuid=True), default=uuid.uuid4, unique=True)
     user_name = db.Column(db.String(150), nullable = False)
     user_email = db.Column(db.String(120), unique=True, nullable = False)
     password = db.Column(db.Text, nullable = False)

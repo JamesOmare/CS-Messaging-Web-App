@@ -16,7 +16,6 @@ class Message(UserMixin, TimestampMixin ,db.Model):
     text_reply = db.Column(db.Text)
     priority = db.Column(db.Integer)
     status = db.Column(db.String(100), default='Pending')
-    agent_code = db.Column(UUID(as_uuid=True), default=None)
     agent_id = db.Column(db.Integer)
     client_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     

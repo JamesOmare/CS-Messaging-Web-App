@@ -62,7 +62,7 @@ def agent_support_page():
 
     # Query for pending messages
     pending_messages_query = Message.query.join(User).filter(
-        Message.agent_code == current_user.user_code,
+        Message.agent_id == current_user.user_id,
         Message.status == "Pending",
     )
 
@@ -85,7 +85,7 @@ def agent_support_page():
 
     # Query for resolved messages
     resolved_messages_query = Message.query.join(User).filter(
-        Message.agent_code == current_user.user_code,
+        Message.agent_id == current_user.user_id,
         Message.status == "Resolved",
     )
 
@@ -171,7 +171,6 @@ def send_message():
 
                 # Assign the message to the agent with the fewest assigned messages
                 agent_to_assign = agents[0]
-                new_message.agent_code = agent_to_assign.user_code
                 new_message.agent_id = agent_to_assign.id
                 
                 # update message sent count to the user
