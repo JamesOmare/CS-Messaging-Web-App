@@ -226,8 +226,8 @@ def generate_users():
         }, 200
             
 
-@auth.route('/get_message_api')
-def get_message_api():
+@auth.route('/generate_messages')
+def generate_messages():
     
         texts = [
         "So it means if u pay ua loan before the due date is a disadvantage the last time I paid earlier it was still a problem",
