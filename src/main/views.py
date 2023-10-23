@@ -44,7 +44,6 @@ def client_support_page():
     return render_template('customer_page.html', **data)
 
 
-
 @main.route('/agent_support_page')
 @login_required
 def agent_support_page():
@@ -62,7 +61,7 @@ def agent_support_page():
 
     # Query for pending messages
     pending_messages_query = Message.query.join(User).filter(
-        Message.agent_id == current_user.user_id,
+        Message.agent_id == current_user.id,
         Message.status == "Pending",
     )
 
@@ -85,7 +84,7 @@ def agent_support_page():
 
     # Query for resolved messages
     resolved_messages_query = Message.query.join(User).filter(
-        Message.agent_id == current_user.user_id,
+        Message.agent_id == current_user.id,
         Message.status == "Resolved",
     )
 

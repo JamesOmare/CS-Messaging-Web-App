@@ -561,6 +561,10 @@
                       {% elif message.priority == 4  %}
                         {% set priority = "Account and Personal Information Update" %}
 
+                      {% elif message.priority == 5  %}
+                        {% set priority = "Batch Number" %}
+
+
                       {% else %}
                         {% set priority = "General" %}
 
