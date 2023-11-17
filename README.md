@@ -30,7 +30,12 @@ Before you begin, make sure you have the following installed on your system:
 
 It's a good practice to create a virtual environment for your project to isolate dependencies. To create a virtual environment, run the following command:
 
+- On macOS and Linux:
 
+  ```
+  python3 -m venv venv or python -m venv venv
+  ```
+  
 Activate the virtual environment:
 
 - On Windows:
