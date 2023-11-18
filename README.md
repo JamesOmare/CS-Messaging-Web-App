@@ -33,6 +33,7 @@ It's a good practice to create a virtual environment for your project to isolate
 - On macOS and Linux:
 
   ```
+  sudo apt install python3.10-venv  or   apt install python<your python version>-venv
   python3 -m venv venv or python -m venv venv
   ```
   
